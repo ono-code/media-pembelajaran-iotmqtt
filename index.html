@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT MQTT Academy - Smart Home & Smart Farming | SMK TEI</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for Grade Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .gradient-border {
+            border-image: linear-gradient(to right, #3b82f6, #10b981) 1;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        @media print {
+            body {
+                background-color: white !important;
+                color: black !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            .glass-panel {
+                background: white !important;
+                border: 1px solid #ccc !important;
+                color: black !important;
+                box-shadow: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-700/60 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand Logo & Info -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                        <i class="fa-solid fa-network-wired text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg leading-tight text-slate-100">IoT MQTT Academy</h1>
+                        <p class="text-xs text-emerald-400 font-medium">Teknik Elektronika Industri SMK</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <nav class="hidden md:flex space-x-2">
+                    <button onclick="switchTab('materi')" id="nav-materi" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center space-x-2 bg-blue-600 text-white">
+                        <i class="fa-solid fa-book-open"></i>
+                        <span>Materi & Konsep</span>
+                    </button>
+                    <button onclick="switchTab('simulator')" id="nav-simulator" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-300 hover:bg-slate-800 transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-microchip"></i>
+                        <span>Simulator Live MQTT</span>
+                    </button>
+                    <button onclick="switchTab('ujian')" id="nav-ujian" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-300 hover:bg-slate-800 transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <span>Uji Kompetensi</span>
+                    </button>
+                    <button onclick="switchTab('laporan')" id="nav-laporan" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-300 hover:bg-slate-800 transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>Laporan Hasil</span>
+                    </button>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white p-2">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden px-4 pt-2 pb-4 space-y-2 border-t border-slate-700 bg-slate-900">
+            <button onclick="switchTab('materi')" class="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-slate-200 hover:bg-slate-800">Materi & Konsep</button>
+            <button onclick="switchTab('simulator')" class="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-slate-200 hover:bg-slate-800">Simulator Live MQTT</button>
+            <button onclick="switchTab('ujian')" class="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-slate-200 hover:bg-slate-800">Uji Kompetensi</button>
+            <button onclick="switchTab('laporan')" class="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-slate-200 hover:bg-slate-800">Laporan Hasil</button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- ================= TAB 1: MATERI & KONSEP ================= -->
+        <section id="tab-materi" class="tab-content space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-900/60 via-slate-900 to-emerald-900/40 p-8 border border-slate-700">
+                <div class="max-w-3xl relative z-10">
+                    <span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-full text-xs font-semibold uppercase tracking-wider mb-3">Modul IoT Tingkat Lanjut</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">Penguasaan Protokol MQTT untuk Smart Home & Smart Farming</h2>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                        Selamat datang di modul interaktif Teknik Elektronika Industri. Di sini Anda akan mempelajari arsitektur event-driven IoT berbasis **MQTT (Message Queuing Telemetry Transport)**, struktur data JSON, serta pengaplikasiannya pada sistem rumah pintar dan pertanian presisi modern.
+                    </p>
+                </div>
+                <div class="absolute -right-10 -bottom-10 opacity-20 pointer-events-none">
+                    <i class="fa-solid fa-wifi text-[220px] text-blue-400"></i>
+                </div>
+            </div>
+
+            <!-- Learning Module Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-blue-500/50 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-400 text-2xl mb-4">
+                            <i class="fa-solid fa-server"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">1. Arsitektur MQTT & Broker</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Pahami konsep Publish/Subscribe, struktur Topic (`home/living/light`), peran MQTT Broker (Mosquitto/EMQX), serta Quality of Service (QoS 0, 1, 2).
+                        </p>
+                    </div>
+                    <button onclick="showModuleDetail(1)" class="w-full py-2.5 bg-slate-800 hover:bg-blue-600 text-slate-200 hover:text-white rounded-xl text-sm font-semibold transition-all">Pelajari Modul 1</button>
+                </div>
+                <!-- Card 2 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-emerald-500/50 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-400 text-2xl mb-4">
+                            <i class="fa-solid fa-house-signal"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">2. Penerapan Smart Home</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Integrasi mikrokontroler (ESP32) dengan relay multi-channel, sensor PIR, DHT22, servo lock, serta otomasi pengiriman payload format JSON.
+                        </p>
+                    </div>
+                    <button onclick="showModuleDetail(2)" class="w-full py-2.5 bg-slate-800 hover:bg-emerald-600 text-slate-200 hover:text-white rounded-xl text-sm font-semibold transition-all">Pelajari Modul 2</button>
+                </div>
+                <!-- Card 3 -->
+                <div class="glass-panel p-6 rounded-2xl hover:border-amber-500/50 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-400 text-2xl mb-4">
+                            <i class="fa-solid fa-wheat-awn"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">3. Penerapan Smart Farming</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Sistem pertanian presisi: monitoring kelembaban tanah, sensor NPK, kontrol otomatis pompa irigasi solenoid & mist sprayer berbasis telemetri MQTT.
+                        </p>
+                    </div>
+                    <button onclick="showModuleDetail(3)" class="w-full py-2.5 bg-slate-800 hover:bg-amber-600 text-slate-200 hover:text-white rounded-xl text-sm font-semibold transition-all">Pelajari Modul 3</button>
+                </div>
+            </div>
+
+            <!-- Detailed Reading Container (Dynamic) -->
+            <div id="module-detail-container" class="glass-panel p-8 rounded-2xl border border-slate-700">
+                <!-- Content injected via JS -->
+            </div>
+        </section>
+
+
+        <!-- ================= TAB 2: SIMULATOR LIVE MQTT ================= -->
+        <section id="tab-simulator" class="tab-content hidden space-y-6">
+            <!-- Simulator Controls Header -->
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 glass-panel p-4 rounded-2xl">
+                <div class="flex items-center space-x-3">
+                    <div class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-base">Virtual Broker Status: <span class="text-emerald-400">ONLINE (Local Mesh)</span></h3>
+                        <p class="text-xs text-slate-400">Protocol: MQTT v3.1.1 | Port: 1883/WebSocket 8083 | Traffic: <span id="msg-counter">0</span> messages</p>
+                    </div>
+                </div>
+                <!-- Mode Switcher -->
+                <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-700 w-full md:w-auto">
+                    <button onclick="switchSimMode('smarthome')" id="sim-btn-home" class="flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white">
+                        <i class="fa-solid fa-house-laptop mr-1.5"></i> Smart Home
+                    </button>
+                    <button onclick="switchSimMode('smartfarm')" id="sim-btn-farm" class="flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-seedling mr-1.5"></i> Smart Farming
+                    </button>
+                    <button onclick="switchSimMode('terminal')" id="sim-btn-terminal" class="flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-terminal mr-1.5"></i> Custom Terminal
+                    </button>
+                </div>
+            </div>
+
+            <!-- SIMULATOR MODE 1: SMART HOME -->
+            <div id="sim-view-smarthome" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Interactive Smart Home Blueprint -->
+                <div class="lg:col-span-2 glass-panel p-6 rounded-2xl relative overflow-hidden">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center justify-between">
+                        <span><i class="fa-solid fa-building-user text-blue-400 mr-2"></i> Denah Interaktif Smart Home</span>
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full border border-blue-500/30">Node ID: ESP32_HOME_01</span>
+                    </h3>
+
+                    <!-- Visual Layout Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Ruang Tamu - Lampu -->
+                        <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-700/80 space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold text-slate-200 text-sm">Lampu Ruang Tamu</span>
+                                <span id="status-lamp" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-800 text-slate-400">OFF</span>
+                            </div>
+                            <div class="flex items-center justify-center py-4">
+                                <div id="icon-lamp" class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 text-3xl transition-all duration-300">
+                                    <i class="fa-solid fa-lightbulb"></i>
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[11px] text-slate-400 font-medium">Topic: <code class="text-blue-400">smarthome/livingroom/light</code></label>
+                                <button onclick="toggleLight()" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-all">Publish Toggle Command</button>
+                            </div>
+                        </div>
+
+                        <!-- Pendingin Ruangan (AC) -->
+                        <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-700/80 space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold text-slate-200 text-sm">AC & Temp Control</span>
+                                <span id="ac-temp-val" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">24 °C</span>
+                            </div>
+                            <div class="flex items-center justify-center py-3">
+                                <div class="text-center">
+                                    <i class="fa-solid fa-snowflake text-cyan-400 text-3xl mb-1 animate-pulse"></i>
+                                    <p class="text-xs text-slate-400">Ruangan: <span id="dht-temp">24.5</span>°C / <span id="dht-hum">60</span>% RH</p>
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[11px] text-slate-400 font-medium">Set Thermostat (MQTT Publish):</label>
+                                <input type="range" min="16" max="30" value="24" id="ac-range" oninput="changeACTemp(this.value)" class="w-full accent-blue-500 cursor-pointer">
+                            </div>
+                        </div>
+
+                        <!-- Door Lock Servo -->
+                        <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-700/80 space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold text-slate-200 text-sm">Smart Door Lock</span>
+                                <span id="status-lock" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">LOCKED</span>
+                            </div>
+                            <div class="flex items-center justify-center py-4">
+                                <div id="icon-lock" class="w-14 h-14 rounded-full bg-emerald-950/60 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-2xl transition-all">
+                                    <i class="fa-solid fa-lock"></i>
+                                </div>
+                            </div>
+                            <button onclick="toggleDoorLock()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-bold transition-all border border-slate-600">Publish: Lock / Unlock</button>
+                        </div>
+
+                        <!-- Motion PIR Sensor -->
+                        <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-700/80 space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold text-slate-200 text-sm">PIR Motion Security</span>
+                                <span id="status-pir" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-800 text-slate-400">NO MOTION</span>
+                            </div>
+                            <div class="flex items-center justify-center py-4">
+                                <div id="icon-pir" class="w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 text-2xl transition-all">
+                                    <i class="fa-solid fa-person-walking"></i>
+                                </div>
+                            </div>
+                            <button onclick="triggerPIRMotion()" class="w-full py-2 bg-amber-600/80 hover:bg-amber-500 text-white rounded-lg text-xs font-bold transition-all">Simulasi Gerakan Manusia</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Topic Subscriber Monitor Side Panel -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-white text-base mb-3 flex items-center">
+                            <i class="fa-solid fa-satellite-dish text-emerald-400 mr-2"></i> Subscribed Live Topics
+                        </h4>
+                        <div class="space-y-2 mb-4">
+                            <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-xs text-slate-300 font-mono">
+                                <span class="text-blue-400 font-bold">SUB</span> smarthome/+/telemetry
+                            </div>
+                            <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-xs text-slate-300 font-mono">
+                                <span class="text-blue-400 font-bold">SUB</span> smarthome/control/#
+                            </div>
+                        </div>
+
+                        <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Incoming Payload Console:</h5>
+                        <div id="home-payload-log" class="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-[11px] h-64 overflow-y-auto space-y-2 text-emerald-400">
+                            <!-- Logs injected here -->
+                            <div class="text-slate-500">// Broker Listening for Smart Home Topic events...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SIMULATOR MODE 2: SMART FARMING -->
+            <div id="sim-view-smartfarm" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Interactive Smart Farm / Greenhouse Layout -->
+                <div class="lg:col-span-2 glass-panel p-6 rounded-2xl">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center justify-between">
+                        <span><i class="fa-solid fa-wheat-field text-emerald-400 mr-2"></i> Telemetri Modern Greenhouse</span>
+                        <span class="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full border border-emerald-500/30">Node ID: ESP32_FARM_GREENHOUSE</span>
+                    </h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Kelembaban Tanah (Soil Moisture) -->
+                        <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-700/80 space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold text-slate-200 text-sm">Sensor Kelembaban Tanah</span>
+                                <span id="soil-val-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">45 %</span>
+                            </div>
+                            <div class="py-2">
+                                <div class="w-full bg-slate-800 rounded-full h-3">
+                                    <div id="soil-bar" class="bg-gradient-to-r from-amber-500 to-emerald-400 h-3 rounded-full transition-all duration-300" style="width: 45%;"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[11px] text-slate-400 font-medium">Ubah Kelembaban (Simulasi Kekeringan):</label>
+                                <input type="range" min="10" max="90" value="45" id="soil-range" oninput="updateSoilMoisture(this.value)" class="w-full accent-emerald-500 cursor-pointer">
+                            </div>
+                        </div>
+
+                        <!-- Pompa Air Solenoid (Irigasi) -->
+                        <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-700/80 space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold text-slate-200 text-sm">Pompa Air Irigasi</span>
+                                <span id="status-pump" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-800 text-slate-400">OFF</span>
+                            </div>
+                            <div class="flex items-center justify-center py-3">
+                                <div id="icon-pump" class="w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 text-2xl transition-all">
+                                    <i class="fa-solid fa-faucet-drip"></i>
+                                </div>
+                            </div>
+                            <button onclick="togglePump()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition-all">Publish: Valve ON / OFF</button>
+                        </div>
+
+                        <!-- Greenhouse Exhaust Fan -->
+                        <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-700/80 space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold text-slate-200 text-sm">Exhaust Fan Suhu</span>
+                                <span id="status-fan" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-800 text-slate-400">IDLE</span>
+                            </div>
+                            <div class="flex items-center justify-center py-3">
+                                <div id="icon-fan" class="w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 text-2xl transition-all">
+                                    <i class="fa-solid fa-fan"></i>
+                                </div>
+                            </div>
+                            <button onclick="toggleFan()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-bold transition-all border border-slate-600">Publish: Toggle Fan</button>
+                        </div>
+
+                        <!-- Auto Irrigation Rule Automation -->
+                        <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-700/80 space-y-3 flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold text-slate-200 text-sm">Logika Otomasi (Edge)</span>
+                                <i class="fa-solid fa-robot text-amber-400"></i>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Apabila Kelembaban Tanah &lt; 30%, Broker akan menerima trigger otomatis untuk menyalakan Solenoid Pompa.
+                            </p>
+                            <div class="flex items-center space-x-2 pt-2">
+                                <input type="checkbox" id="auto-irrigation-check" checked class="w-4 h-4 text-emerald-600 rounded bg-slate-800 border-slate-700">
+                                <label for="auto-irrigation-check" class="text-xs font-semibold text-emerald-400 cursor-pointer">Aktifkan Otomasi Broker</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Farm Console Log -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-white text-base mb-3 flex items-center">
+                            <i class="fa-solid fa-cloud-arrow-down text-emerald-400 mr-2"></i> Smart Farm Telemetry
+                        </h4>
+                        <div class="space-y-2 mb-4">
+                            <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-xs text-slate-300 font-mono">
+                                <span class="text-emerald-400 font-bold">SUB</span> smartfarm/greenhouse/sensors
+                            </div>
+                            <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-xs text-slate-300 font-mono">
+                                <span class="text-emerald-400 font-bold">SUB</span> smartfarm/actuators/solenoid
+                            </div>
+                        </div>
+
+                        <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Live JSON Stream:</h5>
+                        <div id="farm-payload-log" class="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-[11px] h-64 overflow-y-auto space-y-2 text-blue-400">
+                            <div class="text-slate-500">// Smart Farming Broker Log Ready...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SIMULATOR MODE 3: CUSTOM TERMINAL -->
+            <div id="sim-view-terminal" class="hidden glass-panel p-6 rounded-2xl space-y-6">
+                <h3 class="text-lg font-bold text-white flex items-center">
+                    <i class="fa-solid fa-terminal text-blue-400 mr-2"></i> Terminal Pengujian Pesan Custom MQTT
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Publisher Input Form -->
+                    <div class="space-y-4 bg-slate-900/90 p-5 rounded-xl border border-slate-700">
+                        <h4 class="font-bold text-slate-200 text-sm">Form Publish Message</h4>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Topic Name</label>
+                            <input type="text" id="cust-topic" value="smk/tei/praktikum/sensor1" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">QoS Level</label>
+                                <select id="cust-qos" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
+                                    <option value="0">QoS 0 (At most once)</option>
+                                    <option value="1">QoS 1 (At least once)</option>
+                                    <option value="2">QoS 2 (Exactly once)</option>
+                                </select>
+                            </div>
+                            <div class="flex items-end">
+                                <label class="flex items-center space-x-2 cursor-pointer pb-2">
+                                    <input type="checkbox" id="cust-retain" class="rounded bg-slate-950 border-slate-700 text-blue-600">
+                                    <span class="text-xs text-slate-300 font-medium">Retain Flag</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Payload (JSON / Text)</label>
+                            <textarea id="cust-payload" rows="4" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-emerald-400 focus:outline-none focus:border-blue-500">{"device": "ESP32", "sensor": "DHT22", "temp": 28.4, "humidity": 65}</textarea>
+                        </div>
+                        <button onclick="publishCustomMQTT()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg text-xs transition-all shadow-lg shadow-blue-600/30">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> Send Publish Packet
+                        </button>
+                    </div>
+
+                    <!-- Terminal Output Console -->
+                    <div class="flex flex-col justify-between space-y-2 bg-slate-950 p-5 rounded-xl border border-slate-800">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <span class="text-xs font-bold text-slate-300 font-mono">BROKER CONSOLE LOG</span>
+                            <button onclick="clearConsoleLog()" class="text-[11px] text-slate-500 hover:text-slate-300"><i class="fa-solid fa-trash mr-1"></i> Clear Log</button>
+                        </div>
+                        <div id="terminal-console" class="font-mono text-xs text-slate-300 h-64 overflow-y-auto space-y-2 pt-2">
+                            <div class="text-slate-600">// MQTT Broker ready to process custom messages...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= TAB 3: UJI KOMPETENSI (40 SOAL) ================= -->
+        <section id="tab-ujian" class="tab-content hidden space-y-6">
+            <!-- Student Registration Form Before Exam -->
+            <div id="quiz-start-screen" class="max-w-xl mx-auto glass-panel p-8 rounded-2xl border border-slate-700 space-y-6 text-center">
+                <div class="w-16 h-16 bg-blue-500/10 rounded-2xl border border-blue-500/30 flex items-center justify-center text-blue-400 text-3xl mx-auto">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Uji Kompetensi Keahlian IoT MQTT</h3>
+                    <p class="text-xs text-slate-400">Teknik Elektronika Industri SMK - Evaluasi Pemahaman & Praktik</p>
+                </div>
+
+                <div class="space-y-4 text-left">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Nama Lengkap Siswa</label>
+                        <input type="text" id="student-name" placeholder="Contoh: Ahmad Rizky" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">Kelas / Rombel</label>
+                            <input type="text" id="student-class" placeholder="Contoh: XII TEI 1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">NIS / NISN</label>
+                            <input type="text" id="student-nis" placeholder="Contoh: 21221045" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-500/10 p-4 rounded-xl border border-blue-500/20 text-left space-y-2">
+                    <h4 class="text-xs font-bold text-blue-400 uppercase tracking-wider">Ketentuan Ujian:</h4>
+                    <ul class="text-xs text-slate-300 space-y-1 list-disc list-inside">
+                        <li>Jumlah Soal: <b>40 Nomor Pilihan Ganda</b> (Pilihan A, B, C, D, E).</li>
+                        <li>Alokasi Waktu: <b>60 Menit</b>.</li>
+                        <li>Kriteria Ketuntasan Minimal (KKM): <b>75 / 100</b>.</li>
+                        <li>Laporan hasil akan langsung diterbitkan setelah tombol selesaikan ditekan.</li>
+                    </ul>
+                </div>
+
+                <button onclick="startQuiz()" class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-blue-500/25">
+                    Mulai Kerjakan Uji Kompetensi
+                </button>
+            </div>
+
+            <!-- Active Exam Screen -->
+            <div id="quiz-active-screen" class="hidden grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Question & Options Panel -->
+                <div class="lg:col-span-3 glass-panel p-6 rounded-2xl flex flex-col justify-between space-y-6">
+                    <!-- Quiz Header Info -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-700/80 pb-4">
+                        <div>
+                            <span class="text-xs text-blue-400 font-bold uppercase tracking-wider" id="question-category">Kategori Soal</span>
+                            <h3 class="text-lg font-bold text-white" id="question-number-title">Soal Nomor 1 dari 40</h3>
+                        </div>
+                        <!-- Timer -->
+                        <div class="bg-amber-500/10 border border-amber-500/30 text-amber-400 px-4 py-2 rounded-xl flex items-center space-x-2 font-mono font-bold text-sm">
+                            <i class="fa-regular fa-clock"></i>
+                            <span id="quiz-timer">60:00</span>
+                        </div>
+                    </div>
+
+                    <!-- Question Text -->
+                    <div class="space-y-4">
+                        <p class="text-slate-100 text-base sm:text-lg font-medium leading-relaxed" id="question-text">
+                            Loading pertanyaan...
+                        </p>
+                    </div>
+
+                    <!-- Options List (A - E) -->
+                    <div class="space-y-3" id="options-container">
+                        <!-- Options injected by JS -->
+                    </div>
+
+                    <!-- Navigation Footer Buttons -->
+                    <div class="flex items-center justify-between border-t border-slate-700/80 pt-4">
+                        <button onclick="prevQuestion()" id="btn-prev" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition-all flex items-center space-x-2">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            <span>Sebelumnya</span>
+                        </button>
+                        <button onclick="toggleFlagQuestion()" id="btn-flag" class="px-4 py-2.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 rounded-xl text-xs font-bold transition-all">
+                            <i class="fa-solid fa-bookmark mr-1.5"></i> Ragu-ragu
+                        </button>
+                        <button onclick="nextQuestion()" id="btn-next" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-2">
+                            <span>Berikutnya</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Soal Palette Grid Side Panel -->
+                <div class="glass-panel p-6 rounded-2xl space-y-4">
+                    <h4 class="font-bold text-white text-sm flex items-center justify-between">
+                        <span>Navigasi Soal</span>
+                        <span class="text-xs font-normal text-slate-400"><span id="answered-count">0</span>/40 Terjawab</span>
+                    </h4>
+
+                    <!-- Palette 1 - 40 -->
+                    <div class="grid grid-cols-5 gap-2 max-h-80 overflow-y-auto pr-1" id="question-palette">
+                        <!-- Buttons 1..40 injected by JS -->
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-700 space-y-2 text-xs">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-blue-600 rounded"></div>
+                            <span class="text-slate-400">Sudah Dijawab</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-amber-500 rounded"></div>
+                            <span class="text-slate-400">Ragu-ragu</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-slate-800 border border-slate-700 rounded"></div>
+                            <span class="text-slate-400">Belum Dijawab</span>
+                        </div>
+                    </div>
+
+                    <button onclick="confirmSubmitQuiz()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition-all shadow-lg shadow-emerald-600/30 mt-4">
+                        Selesaikan & Kirim Ujian
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= TAB 4: LAPORAN HASIL UJI KOMPETENSI ================= -->
+        <section id="tab-laporan" class="tab-content hidden space-y-8">
+            <div id="no-report-view" class="text-center py-16 glass-panel rounded-2xl">
+                <i class="fa-solid fa-file-circle-xmark text-6xl text-slate-600 mb-4"></i>
+                <h3 class="text-xl font-bold text-white mb-2">Belum Ada Hasil Uji Kompetensi</h3>
+                <p class="text-slate-400 text-sm mb-6">Silakan selesaikan Uji Kompetensi pada tab "Uji Kompetensi" untuk menerbitkan laporan nilai.</p>
+                <button onclick="switchTab('ujian')" class="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all">
+                    Buka Uji Kompetensi Now
+                </button>
+            </div>
+
+            <!-- Report Card Container (Printable) -->
+            <div id="report-view-container" class="hidden space-y-8">
+                <!-- Certificate & Header Summary -->
+                <div class="glass-panel p-8 rounded-2xl border-t-4 border-blue-500 relative overflow-hidden">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-b border-slate-700 pb-6">
+                        <div>
+                            <span class="text-xs font-bold text-blue-400 uppercase tracking-widest">Laporan Evaluasi Pembelajaran SMK</span>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Hasil Uji Kompetensi IoT & MQTT Broker</h2>
+                            <p class="text-xs text-slate-400 mt-1">Kompetensi Keahlian: Teknik Elektronika Industri (TEI)</p>
+                        </div>
+                        <div class="flex items-center space-x-3 no-print">
+                            <button onclick="window.print()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold transition-all border border-slate-600 flex items-center space-x-2">
+                                <i class="fa-solid fa-print"></i>
+                                <span>Cetak Laporan PDF</span>
+                            </button>
+                            <button onclick="resetExam()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-2">
+                                <i class="fa-solid fa-rotate-right"></i>
+                                <span>Ulangi Ujian</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Student Metadata & Score Badge Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 pt-6">
+                        <!-- Metadata -->
+                        <div class="md:col-span-2 space-y-2 text-sm">
+                            <div class="flex justify-between border-b border-slate-800 py-1">
+                                <span class="text-slate-400">Nama Siswa:</span>
+                                <span class="font-bold text-white" id="rep-name">-</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-800 py-1">
+                                <span class="text-slate-400">Kelas / Rombel:</span>
+                                <span class="font-bold text-slate-200" id="rep-class">-</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-800 py-1">
+                                <span class="text-slate-400">NIS / NISN:</span>
+                                <span class="font-bold text-slate-200" id="rep-nis">-</span>
+                            </div>
+                            <div class="flex justify-between py-1">
+                                <span class="text-slate-400">Waktu Pengerjaan:</span>
+                                <span class="font-bold text-slate-200" id="rep-time">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Score Card -->
+                        <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-700 text-center flex flex-col justify-center">
+                            <span class="text-xs font-bold text-slate-400 uppercase mb-1">Nilai Akhir Ujian</span>
+                            <div class="text-4xl font-extrabold text-blue-400" id="rep-score">0</div>
+                            <span class="text-[11px] text-slate-400 mt-1">Skala 0 - 100</span>
+                        </div>
+
+                        <!-- Status KKM -->
+                        <div class="bg-slate-900/90 p-5 rounded-xl border border-slate-700 text-center flex flex-col justify-center">
+                            <span class="text-xs font-bold text-slate-400 uppercase mb-1">Status Kelulusan (KKM 75)</span>
+                            <div class="text-lg font-bold" id="rep-kkm-status">TUNTAS</div>
+                            <span class="text-[11px] text-slate-400 mt-1" id="rep-correct-count">0 / 40 Soal Benar</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Topic Analysis Chart & Summary Breakdown -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <h3 class="font-bold text-white text-base mb-4 flex items-center">
+                            <i class="fa-solid fa-chart-radar text-emerald-400 mr-2"></i> Analisis Penguasaan Topik
+                        </h3>
+                        <div class="h-64 flex items-center justify-center">
+                            <canvas id="topicChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl space-y-4">
+                        <h3 class="font-bold text-white text-base mb-2">Rincian Performa Topik Pembelajaran</h3>
+                        <div class="space-y-3" id="topic-performance-list">
+                            <!-- Topic items injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Answers Key Review -->
+                <div class="glass-panel p-6 rounded-2xl space-y-6">
+                    <h3 class="text-xl font-bold text-white flex items-center justify-between">
+                        <span><i class="fa-solid fa-list-check text-blue-400 mr-2"></i> Rekapitualisasi Jawaban & Pembahasan</span>
+                        <span class="text-xs text-slate-400 font-normal">Kunci Jawaban Resmi</span>
+                    </h3>
+
+                    <div class="space-y-4" id="review-questions-container">
+                        <!-- Review items 1..40 injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="glass-panel border-t border-slate-800 py-4 no-print mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            &copy; 2026 Media Pembelajaran Teknik Elektronika Industri SMK. Penguasaan Sistem Internet of Things & MQTT Broker.
+        </div>
+    </footer>
+
+    <!-- MODAL CONFIRM SUBMIT -->
+    <div id="modal-submit" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full p-6 rounded-2xl border border-slate-700 space-y-4 text-center">
+            <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white">Konfirmasi Pengiriman Ujian</h3>
+            <p class="text-xs text-slate-300">
+                Apakah Anda yakin ingin mengakhiri dan mengirimkan jawaban Uji Kompetensi ini?
+            </p>
+            <div id="modal-unanswered-warning" class="text-xs text-amber-400 bg-amber-500/10 p-2.5 rounded-lg font-medium border border-amber-500/20 hidden">
+                Peringatan: Masih ada beberapa nomor soal yang belum dijawab!
+            </div>
+            <div class="flex items-center space-x-3 pt-2">
+                <button onclick="closeModalSubmit()" class="flex-1 py-2.5 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold hover:bg-slate-700">Kembali Memeriksa</button>
+                <button onclick="submitExamFinal()" class="flex-1 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-500 shadow-lg shadow-emerald-600/30">Ya, Selesaikan</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* ================= 1. DATABASE MATERIAL MODULES ================= */
+        const moduleContents = {
+            1: `
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3 text-blue-400 mb-2">
+                        <i class="fa-solid fa-server text-2xl"></i>
+                        <h3 class="text-2xl font-bold text-white">Modul 1: Konsep Dasar MQTT & Arsitektur Broker</h3>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        <b>MQTT (Message Queuing Telemetry Transport)</b> adalah protokol komunikasi standar ISO (ISO/IEC 20922) berbasis publish/subscribe yang sangat ringan (lightweight) dan berjalan di atas protokol TCP/IP.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <h4 class="font-bold text-blue-400 text-sm">Komponen Utama MQTT:</h4>
+                            <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                                <li><b>Broker:</b> Server pusat pengatur dan penyaring seluruh lalu lintas pesan (misal: Mosquitto, EMQX).</li>
+                                <li><b>Publisher:</b> Perangkat/node sensor yang mengunggah data ke topik tertentu.</li>
+                                <li><b>Subscriber:</b> Perangkat/aplikasi pengontrol yang menerima payload dari topik yang didaftarkan.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <h4 class="font-bold text-emerald-400 text-sm">Level Quality of Service (QoS):</h4>
+                            <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                                <li><b>QoS 0 (At most once):</b> Pesan dikirim sekali tanpa kepastian diterima (paling cepat, tanpa overhead).</li>
+                                <li><b>QoS 1 (At least once):</b> Pesan dijamin sampai minimal sekali (memerlukan ACK).</li>
+                                <li><b>QoS 2 (Exactly once):</b> Pesan dijamin sampai tepat 1 kali (sangat aman, cocok untuk transaksi kritis).</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-white text-sm">Struktur Topic & Wildcard:</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Topic bersifat hirarkis menggunakan tanda garis miring (<code>/</code>). Karakter wildcard <code>+</code> digunakan untuk menyaring 1 level hirarki, sedangkan <code>#</code> digunakan untuk menyaring seluruh sub-hirarki di bawahnya.
+                    </p>
+                </div>
+            `,
+            2: `
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3 text-emerald-400 mb-2">
+                        <i class="fa-solid fa-house-signal text-2xl"></i>
+                        <h3 class="text-2xl font-bold text-white">Modul 2: Implementasi Sistem Smart Home</h3>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Sistem <b>Smart Home</b> berbasis MQTT menghubungkan node mikrokontroler (ESP32/ESP8266) di berbagai ruangan ke server pusat atau dashboard kontroler.
+                    </p>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3 font-mono text-xs text-emerald-400">
+                        <div class="text-slate-400">// Contoh Struktur Format Payload Data JSON untuk Smart Home</div>
+                        <div>
+                        {<br>
+                        &nbsp;&nbsp;"device_id": "ESP32_LIVING_ROOM",<br>
+                        &nbsp;&nbsp;"sensors": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"temperature": 25.4,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"humidity": 62,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"pir_motion": true<br>
+                        &nbsp;&nbsp;},<br>
+                        &nbsp;&nbsp;"actuators": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"relay1_light": "ON",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"door_lock": "LOCKED"<br>
+                        &nbsp;&nbsp;}<br>
+                        }
+                        </div>
+                    </div>
+                </div>
+            `,
+            3: `
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3 text-amber-400 mb-2">
+                        <i class="fa-solid fa-wheat-awn text-2xl"></i>
+                        <h3 class="text-2xl font-bold text-white">Modul 3: Implementasi Smart Farming & Pertanian Presisi</h3>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        <b>Smart Farming</b> memenfaatkan telemetri realtime MQTT untuk mengoptimalkan efisiensi irigasi, penggunaan pupuk, serta pemantauan iklim mikro tanaman di dalam Greenhouse.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <h4 class="font-bold text-amber-400 text-sm">Sensor Utama Smart Farming:</h4>
+                            <p class="text-xs text-slate-300">Sensor Kelembaban Tanah Kapasitif, Sensor NPK Tanah (RS485 Modbus), Sensor Intensitas Cahaya (BH1750), dan Sensor Suhu Lingkungan (SHT30).</p>
+                        </div>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <h4 class="font-bold text-blue-400 text-sm">Aktuator Otomatisasi:</h4>
+                            <p class="text-xs text-slate-300">Pompa Solenoid Valve Irigasi Tetes, Fogging Sprayer (Pengkabut), dan Heavy-duty Exhaust Fan untuk sirkulasi suhu udara.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        };
+
+        function showModuleDetail(id) {
+            document.getElementById('module-detail-container').innerHTML = moduleContents[id];
+            document.getElementById('module-detail-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+
+        /* ================= 2. MQTT SIMULATOR LOGIC ================= */
+        let simState = {
+            lamp: false,
+            acTemp: 24,
+            lock: true,
+            pir: false,
+            soil: 45,
+            pump: false,
+            fan: false,
+            messageCount: 0
+        };
+
+        function switchSimMode(mode) {
+            document.getElementById('sim-view-smarthome').classList.add('hidden');
+            document.getElementById('sim-view-smartfarm').classList.add('hidden');
+            document.getElementById('sim-view-terminal').classList.add('hidden');
+
+            document.getElementById('sim-btn-home').className = "flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white";
+            document.getElementById('sim-btn-farm').className = "flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white";
+            document.getElementById('sim-btn-terminal').className = "flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white";
+
+            if(mode === 'smarthome') {
+                document.getElementById('sim-view-smarthome').classList.remove('hidden');
+                document.getElementById('sim-btn-home').className = "flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white";
+            } else if(mode === 'smartfarm') {
+                document.getElementById('sim-view-smartfarm').classList.remove('hidden');
+                document.getElementById('sim-btn-farm').className = "flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white";
+            } else {
+                document.getElementById('sim-view-terminal').classList.remove('hidden');
+                document.getElementById('sim-btn-terminal').className = "flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-bold transition-all bg-purple-600 text-white";
+            }
+        }
+
+        function incrementMsgCounter() {
+            simState.messageCount++;
+            document.getElementById('msg-counter').innerText = simState.messageCount;
+        }
+
+        function logToConsole(containerId, topic, payload, type = "PUB") {
+            incrementMsgCounter();
+            const container = document.getElementById(containerId);
+            const time = new Date().toLocaleTimeString();
+            const logItem = document.createElement('div');
+            logItem.className = "p-1.5 rounded bg-slate-900 border border-slate-800 text-[11px] leading-tight";
+            logItem.innerHTML = `<span class="text-slate-500">[${time}]</span> <span class="font-bold ${type==='PUB'?'text-blue-400':'text-emerald-400'}">${type}</span> <span class="text-slate-300 font-bold">${topic}</span><br><span class="text-slate-400 font-mono">${typeof payload === 'object'? JSON.stringify(payload) : payload}</span>`;
+            container.prepend(logItem);
+
+            // Also mirror to custom terminal
+            if(containerId !== 'terminal-console') {
+                const termConsole = document.getElementById('terminal-console');
+                const termItem = logItem.cloneNode(true);
+                termConsole.prepend(termItem);
+            }
+        }
+
+        // Smart Home Handlers
+        function toggleLight() {
+            simState.lamp = !simState.lamp;
+            const statusBg = document.getElementById('status-lamp');
+            const icon = document.getElementById('icon-lamp');
+            if(simState.lamp) {
+                statusBg.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30";
+                statusBg.innerText = "ON (80%)";
+                icon.className = "w-16 h-16 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center text-3xl shadow-lg shadow-amber-500/20";
+            } else {
+                statusBg.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-800 text-slate-400";
+                statusBg.innerText = "OFF";
+                icon.className = "w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 text-3xl";
+            }
+            logToConsole('home-payload-log', 'smarthome/livingroom/light', { status: simState.lamp ? "ON" : "OFF", payload_val: simState.lamp?1:0 });
+        }
+
+        function changeACTemp(val) {
+            simState.acTemp = val;
+            document.getElementById('ac-temp-val').innerText = val + " °C";
+            logToConsole('home-payload-log', 'smarthome/ac/temp', { target_temp: parseInt(val), mode: "COOL" });
+        }
+
+        function toggleDoorLock() {
+            simState.lock = !simState.lock;
+            const status = document.getElementById('status-lock');
+            const icon = document.getElementById('icon-lock');
+            if(simState.lock) {
+                status.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                status.innerText = "LOCKED";
+                icon.className = "w-14 h-14 rounded-full bg-emerald-950/60 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-2xl";
+                icon.innerHTML = '<i class="fa-solid fa-lock"></i>';
+            } else {
+                status.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30";
+                status.innerText = "UNLOCKED";
+                icon.className = "w-14 h-14 rounded-full bg-red-950/60 border border-red-500/40 flex items-center justify-center text-red-400 text-2xl";
+                icon.innerHTML = '<i class="fa-solid fa-lock-open"></i>';
+            }
+            logToConsole('home-payload-log', 'smarthome/security/door', { state: simState.lock ? "LOCKED" : "UNLOCKED" });
+        }
+
+        function triggerPIRMotion() {
+            simState.pir = true;
+            const status = document.getElementById('status-pir');
+            const icon = document.getElementById('icon-pir');
+            status.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse";
+            status.innerText = "MOTION DETECTED!";
+            icon.className = "w-14 h-14 rounded-full bg-red-500/20 text-red-400 border border-red-500/40 flex items-center justify-center text-2xl";
+
+            logToConsole('home-payload-log', 'smarthome/security/pir', { motion: true, zone: "FRONT_PORCH" });
+
+            setTimeout(() => {
+                simState.pir = false;
+                status.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-800 text-slate-400";
+                status.innerText = "NO MOTION";
+                icon.className = "w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 text-2xl";
+            }, 3000);
+        }
+
+        // Smart Farm Handlers
+        function updateSoilMoisture(val) {
+            simState.soil = val;
+            document.getElementById('soil-val-badge').innerText = val + " %";
+            document.getElementById('soil-bar').style.width = val + "%";
+
+            logToConsole('farm-payload-log', 'smartfarm/greenhouse/soil_moisture', { moisture: parseInt(val), unit: "%" });
+
+            // Auto Automation Check
+            const isAuto = document.getElementById('auto-irrigation-check').checked;
+            if(isAuto && val < 30 && !simState.pump) {
+                togglePump(true);
+            }
+        }
+
+        function togglePump(forceState = null) {
+            simState.pump = forceState !== null ? forceState : !simState.pump;
+            const status = document.getElementById('status-pump');
+            const icon = document.getElementById('icon-pump');
+            if(simState.pump) {
+                status.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30";
+                status.innerText = "PUMPING WATER";
+                icon.className = "w-14 h-14 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/40 flex items-center justify-center text-2xl animate-bounce";
+            } else {
+                status.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-800 text-slate-400";
+                status.innerText = "OFF";
+                icon.className = "w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 text-2xl";
+            }
+            logToConsole('farm-payload-log', 'smartfarm/actuators/water_pump', { status: simState.pump ? "ON" : "OFF" });
+        }
+
+        function toggleFan() {
+            simState.fan = !simState.fan;
+            const status = document.getElementById('status-fan');
+            const icon = document.getElementById('icon-fan');
+            if(simState.fan) {
+                status.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                status.innerText = "RUNNING";
+                icon.className = "w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center text-2xl animate-spin";
+            } else {
+                status.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-800 text-slate-400";
+                status.innerText = "IDLE";
+                icon.className = "w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 text-2xl";
+            }
+            logToConsole('farm-payload-log', 'smartfarm/actuators/exhaust_fan', { status: simState.fan ? "ACTIVE" : "IDLE" });
+        }
+
+        function publishCustomMQTT() {
+            const topic = document.getElementById('cust-topic').value;
+            const payload = document.getElementById('cust-payload').value;
+            logToConsole('terminal-console', topic, payload, 'PUB');
+        }
+
+        function clearConsoleLog() {
+            document.getElementById('terminal-console').innerHTML = '<div class="text-slate-600">// Console log cleared.</div>';
+        }
+
+        // Initialize default view content
+        showModuleDetail(1);
+
+
+        /* ================= 3. UJI KOMPETENSI (40 SOAL PILIHAN GANDA) ================= */
+        const examQuestions = [
+            // Topik 1: Konsep & Arsitektur MQTT (Soal 1 - 10)
+            {
+                id: 1, category: "Konsep MQTT",
+                question: "Protokol MQTT berjalan di atas lapisan transport protokol apa untuk menjamin keandalan pengiriman paket data?",
+                options: ["A. UDP", "B. TCP/IP", "C. HTTP", "D. CoAP", "B. Bluetooth"],
+                answer: 1, explanation: "MQTT beroperasi di atas protokol transport TCP/IP yang menjamin urutan dan keandalan data."
+            },
+            {
+                id: 2, category: "Konsep MQTT",
+                question: "Komponen utama dalam arsitektur MQTT yang bertugas menerima, menyaring, dan mendistribusikan pesan ke subscriber adalah...",
+                options: ["A. Gateway", "B. Broker", "C. Node Client", "D. Router", "E. Access Point"],
+                answer: 1, explanation: "MQTT Broker berfungsi sebagai server sentral penyaring pesan."
+            },
+            {
+                id: 3, category: "Konsep MQTT",
+                question: "Pernyataan yang tepat mengenai perbedaan mendasar antara HTTP dan MQTT adalah...",
+                options: [
+                    "A. HTTP menggunakan pola Publish/Subscribe sedangkan MQTT menggunakan Request/Response",
+                    "B. HTTP jauh lebih ringan daripada MQTT",
+                    "C. MQTT menggunakan pola Publish/Subscribe sedangkan HTTP menggunakan Request/Response",
+                    "D. MQTT membutuhkan overhead header pesan sebesar 200 Byte",
+                    "E. HTTP tidak membutuhkan alamat IP"
+                ],
+                answer: 2, explanation: "MQTT menggunakan pola Publish/Subscribe yang sangat ringan dibanding HTTP Request/Response."
+            },
+            {
+                id: 4, category: "Konsep MQTT",
+                question: "Karakter wildcard tunggal (single-level) pada topik MQTT disimbolkan dengan karakter...",
+                options: ["A. #", "B. *", "C. +", "D. $", "E. %"],
+                answer: 2, explanation: "Karakter + digunakan sebagai single-level wildcard pada topik MQTT."
+            },
+            {
+                id: 5, category: "Konsep MQTT",
+                question: "Karakter wildcard bertingkat (multi-level) yang menyaring seluruh topik di bawah hierarki disimbolkan dengan...",
+                options: ["A. +", "B. #", "C. &", "D. @", "E. /"],
+                answer: 1, explanation: "Karakter # adalah multi-level wildcard pada MQTT."
+            },
+            {
+                id: 6, category: "Konsep MQTT",
+                question: "Level QoS (Quality of Service) pada MQTT yang menjamin pesan dikirim tepat satu kali (Exactly Once) adalah...",
+                options: ["A. QoS 0", "B. QoS 1", "C. QoS 2", "D. QoS 3", "E. QoS Retain"],
+                answer: 2, explanation: "QoS 2 memberikan jaminan penerimaan pesan tepat satu kali tanpa duplikasi."
+            },
+            {
+                id: 7, category: "Konsep MQTT",
+                question: "Fitur MQTT yang memungkinkan broker menyimpan pesan terakhir pada suatu topik agar client baru langsung menerima data terbaru dinamakan...",
+                options: ["A. Last Will and Testament", "B. Retain Message", "C. Keep Alive", "D. Clean Session", "E. Payload Buffer"],
+                answer: 1, explanation: "Retain Message membuat broker menyimpan pesan terakhir pada topik."
+            },
+            {
+                id: 8, category: "Konsep MQTT",
+                question: "Fitur 'Last Will and Testament' (LWT) pada protokol MQTT berfungsi untuk...",
+                options: [
+                    "A. Menghapus pesan secara otomatis setelah 24 jam",
+                    "B. Mengirimkan pesan otomatis dari broker ketika client terputus secara tidak wajar",
+                    "C. Mengenkripsi kredensial koneksi",
+                    "D. Membatasi jumlah client terhubung",
+                    "E. Mengukur kecepatan transmisi data"
+                ],
+                answer: 1, explanation: "LWT adalah pesan darurat yang dikirim broker saat client mati/terputus tak wajar."
+            },
+            {
+                id: 9, category: "Konsep MQTT",
+                question: "Port standar yang umum digunakan untuk transmisi MQTT tanpa enkripsi (Unencrypted) adalah...",
+                options: ["A. 80", "B. 443", "C. 1883", "D. 8883", "E. 21"],
+                answer: 2, explanation: "Port standar default untuk MQTT tanpa TLS adalah 1883."
+            },
+            {
+                id: 10, category: "Konsep MQTT",
+                question: "Port standar aman (Encrypted TLS/SSL) yang digunakan untuk koneksi MQTT adalah...",
+                options: ["A. 1883", "B. 8883", "C. 8080", "D. 3000", "E. 502"],
+                answer: 1, explanation: "Port 8883 digunakan untuk MQTT secure (MQTTS) dengan enkripsi TLS."
+            },
+
+            // Topik 2: Mikrokontroler & Format Payload JSON (Soal 11 - 20)
+            {
+                id: 11, category: "Payload & Mikrokontroler",
+                question: "Format penulisan pertukaran data yang paling umum dan terstruktur untuk payload MQTT adalah...",
+                options: ["A. XML", "B. JSON", "C. CSV", "D. HTML", "E. HEX"],
+                answer: 1, explanation: "JSON (JavaScript Object Notation) adalah format standar populer untuk payload IoT."
+            },
+            {
+                id: 12, category: "Payload & Mikrokontroler",
+                question: "Pada pemrograman Arduino C++ untuk ESP32, library yang sangat populer untuk komunikasi MQTT adalah...",
+                options: ["A. WiFiManager", "B. PubSubClient", "C. ArduinoJson", "D. ESPAsyncWebServer", "E. SoftwareSerial"],
+                answer: 1, explanation: "PubSubClient adalah library utama untuk komunikasi MQTT pada mikrokontroler."
+            },
+            {
+                id: 13, category: "Payload & Mikrokontroler",
+                question: "Fungsi `client.loop()` pada library PubSubClient bertindak untuk...",
+                options: [
+                    "A. Menghubungkan ESP32 ke WiFi",
+                    "B. Menjaga koneksi tetap hidup dan memproses paket masuk/keluar MQTT",
+                    "C. Menghapus buffer memori",
+                    "D. Membaca sensor analog",
+                    "E. Mengatur alamat IP statis"
+                ],
+                answer: 1, explanation: "client.loop() harus dipanggil berulang di loop() untuk menjaga heartbeat dan event handler MQTT."
+            },
+            {
+                id: 14, category: "Payload & Mikrokontroler",
+                question: "Manakah sintaks penulisan JSON payload yang valid untuk mengirimkan suhu 28.5 °C?",
+                options: [
+                    "A. {temp: 28.5}",
+                    "B. {\"temp\": 28.5}",
+                    "C. [temp = 28.5]",
+                    "D. <temp>28.5</temp>",
+                    "E. {\"temp\" = 28.5}"
+                ],
+                answer: 1, explanation: "Format JSON valid memerlukan tanda petik ganda pada key: {\"temp\": 28.5}."
+            },
+            {
+                id: 15, category: "Payload & Mikrokontroler",
+                question: "Jika ESP32 berlangganan topik `home/+/light`, manakah pesan topik di bawah ini yang AKAN DITERIMA?",
+                options: [
+                    "A. home/livingroom/light",
+                    "B. home/livingroom/light/ceiling",
+                    "C. home/light",
+                    "D. office/livingroom/light",
+                    "E. home/livingroom/temp"
+                ],
+                answer: 0, explanation: "Wildcard + hanya menggantikan tepat 1 level di tengah, sehingga cocok dengan home/livingroom/light."
+            },
+            {
+                id: 16, category: "Payload & Mikrokontroler",
+                question: "Library Arduino yang digunakan untuk mem-parsing (mengurai) string payload JSON menjadi variabel adalah...",
+                options: ["A. ArduinoJson", "B. Wire.h", "C. SPI.h", "D. ModbusMaster", "E. EEPROM.h"],
+                answer: 0, explanation: "ArduinoJson digunakan untuk serialisasi dan deserialisasi JSON."
+            },
+            {
+                id: 17, category: "Payload & Mikrokontroler",
+                question: "Metode callback `void callback(char* topic, byte* payload, unsigned int length)` pada ESP32 dieksekusi saat...",
+                options: [
+                    "A. ESP32 berhasil terhubung ke WiFi",
+                    "B. Terdapat pesan masuk pada topik yang di-subscribe",
+                    "C. ESP32 gagal melakukan publishing",
+                    "D. Memori flash penuh",
+                    "E. Tegangan input drop"
+                ],
+                answer: 1, explanation: "Callback function dipanggil otomatis ketika ada incoming message dari topik tersubskripsi."
+            },
+            {
+                id: 18, category: "Payload & Mikrokontroler",
+                question: "Sintaks yang benar untuk mempublikasikan pesan 'ON' ke topik `smarthome/relay1` menggunakan PubSubClient adalah...",
+                options: [
+                    "A. client.subscribe(\"smarthome/relay1\", \"ON\");",
+                    "B. client.publish(\"smarthome/relay1\", \"ON\");",
+                    "C. client.send(\"smarthome/relay1\", \"ON\");",
+                    "D. client.write(\"smarthome/relay1\", \"ON\");",
+                    "E. client.post(\"smarthome/relay1\", \"ON\");"
+                ],
+                answer: 1, explanation: "Metode client.publish(topic, payload) digunakan untuk menerbitkan pesan."
+            },
+            {
+                id: 19, category: "Payload & Mikrokontroler",
+                question: "Berapakah ukuran minimum overhead header pada paket data kontrol MQTT?",
+                options: ["A. 2 Byte", "B. 20 Byte", "C. 64 Byte", "D. 128 Byte", "E. 512 Byte"],
+                answer: 0, explanation: "Header fixed MQTT sangat hemat daya dan bandwidth, hanya berukuran 2 Byte."
+            },
+            {
+                id: 20, category: "Payload & Mikrokontroler",
+                question: "Fungsi parameter 'Keep Alive' dalam konfigurasi koneksi MQTT Client adalah untuk...",
+                options: [
+                    "A. Menentukan batas maksimal ukuran payload",
+                    "B. Mengatur selang waktu (dalam detik) pengiriman pinger PINGREQ untuk menjaga sesi koneksi",
+                    "C. Mengunci alamat IP broker",
+                    "D. Menentukan nomor port serial",
+                    "E. Menghitung daya baterai sensor"
+                ],
+                answer: 1, explanation: "Keep alive interval mengatur deteksi apakah client masih terhubung secara berkala."
+            },
+
+            // Topik 3: Penerapan Smart Home (Soal 21 - 30)
+            {
+                id: 21, category: "Smart Home",
+                question: "Perangkat aktuator yang digunakan untuk memutus atau menghubungkan arus listrik AC 220V pada lampu rumah berbasis sinyal digital ESP32 adalah...",
+                options: ["A. Sensor PIR", "B. Modul Relay", "C. LDR", "D. Optocoupler", "E. Transistor NPN"],
+                answer: 1, explanation: "Modul Relay digunakan sebagai saklar elektronik untuk beban listrik tinggi."
+            },
+            {
+                id: 22, category: "Smart Home",
+                question: "Sensor yang bekerja mendeteksi radiasi sinar inframerah dari pergerakan tubuh manusia pada sistem keamanan rumah adalah...",
+                options: ["A. DHT11", "B. HC-SR04", "C. PIR (Passive Infrared)", "D. MQ-2", "E. Flame Sensor"],
+                answer: 2, explanation: "Sensor PIR mendeteksi perubahan radiasi inframerah akibat pergerakan objek bermassa panas."
+            },
+            {
+                id: 23, category: "Smart Home",
+                question: "Dalam hirarki topik MQTT Smart Home: `smarthome/lantai1/ruangtamu/lampu`, bagian `lantai1` menunjukkan...",
+                options: ["A. Root topic", "B. Sub-topic lokasi", "C. Nama perangkat", "D. Nilai telemetry", "E. Broker ID"],
+                answer: 1, explanation: "Struktur hirarki topik membagi wilayah berdasarkan lokasi tingkat/ruangan."
+            },
+            {
+                id: 24, category: "Smart Home",
+                question: "Untuk mengontrol Kunci Pintu Otomatis (Smart Lock Door) menggunakan sinyal PWM dari mikrokontroler, aktuator mekanis yang tepat adalah...",
+                options: ["A. Motor DC", "B. Motor Servo / Solenoid Door Lock", "C. Stepper Motor", "D. Relay AC", "E. Buzzer Piezo"],
+                answer: 1, explanation: "Motor Servo atau Solenoid Door Lock umum dipakai untuk pengunci pintu elektronik."
+            },
+            {
+                id: 25, category: "Smart Home",
+                question: "Sensor MQ-2 pada aplikasi rumah pintar berfungsi untuk mendeteksi...",
+                options: ["A. Intensitas cahaya", "B. Kebocoran gas LPG dan asap", "C. Kelembaban tanah", "D. Curah hujan", "E. Kecepatan angin"],
+                answer: 1, explanation: "MQ-2 adalah sensor pendeteksi gas mudah terbakar (LPG/Metana) dan asap."
+            },
+            {
+                id: 26, category: "Smart Home",
+                question: "Jika sensor kebocoran gas mendeteksi bahaya, perintah MQTT terbaik yang dipublikasikan ke topik peringatan adalah...",
+                options: [
+                    "A. QoS 0 dengan pesan 'INFO'",
+                    "B. QoS 2 dengan pesan 'DANGER_GAS_LEAK' dan Retain True",
+                    "C. Tanpa topic",
+                    "D. QoS 0 tanpa payload",
+                    "E. HTTP GET Request"
+                ],
+                answer: 1, explanation: "Sistem alarm darurat memerlukan keandalan tinggi (QoS 1/2) serta Retain agar alert langsung terbaca."
+            },
+            {
+                id: 27, category: "Smart Home",
+                question: "Sensor digital yang mampu mengukur suhu udara sekaligus kelembaban relatif (RH) secara bersamaan adalah...",
+                options: ["A. DS18B20", "B. DHT22 / DHT11", "C. LDR", "D. Thermocouple", "E. LM35"],
+                answer: 1, explanation: "DHT11/DHT22 membaca 2 parameter sekaligus: suhu dan kelembaban udara."
+            },
+            {
+                id: 28, category: "Smart Home",
+                question: "Platform dashboard open-source IoT yang sangat populer dihubungkan dengan broker MQTT untuk visualisasi rumah pintar adalah...",
+                options: ["A. Node-RED / Home Assistant", "B. Microsoft Word", "C. AutoCAD", "D. Proteus", "E. XAMPP"],
+                answer: 0, explanation: "Node-RED dan Home Assistant adalah platform manajemen otomasi rumah berbasis MQTT."
+            },
+            {
+                id: 29, category: "Smart Home",
+                question: "Manakah desain topik MQTT yang PALING BAIK dan terstruktur untuk sistem kontrol pendingin udara (AC) di kamar utama?",
+                options: [
+                    "A. ac/kamar/on",
+                    "B. smarthome/kamar_utama/ac/control",
+                    "C. 123/ac/set",
+                    "D. suhu_ruangan_ac_kamar",
+                    "E. control_all"
+                ],
+                answer: 1, explanation: "Penamaan topik terstruktur diawali dari domain utama, lokasi spesifik, perangkat, dan aksi."
+            },
+            {
+                id: 30, category: "Smart Home",
+                question: "Pada arsitektur IoT Smart Home, komponen yang berfungsi menghubungkan perangkat IoT lokal ber-protocol Zigbee/BLE ke Broker MQTT dinamakan...",
+                options: ["A. Smart Gateway", "B. Power Supply", "C. Inverter", "D. Transformer", "E. Signal Generator"],
+                answer: 0, explanation: "Smart Gateway mengonversi protokol mesh lokal (Zigbee/Bluetooth) ke MQTT TCP/IP."
+            },
+
+            // Topik 4: Penerapan Smart Farming (Soal 31 - 40)
+            {
+                id: 31, category: "Smart Farming",
+                question: "Sensor yang paling tepat digunakan untuk mengukur kadar air di dalam tanah pertanian secara akurat tanpa terpengaruh korosi adalah...",
+                options: [
+                    "A. Resistive Soil Moisture Sensor",
+                    "B. Capacitive Soil Moisture Sensor",
+                    "C. Sensor Ultrasonik HC-SR04",
+                    "D. Sensor Raindrops",
+                    "E. Sensor PH Air"
+                ],
+                answer: 1, explanation: "Sensor kelembaban tanah jenis kapasitif tahan terhadap korosi elektrolisis dibanding jenis resistif."
+            },
+            {
+                id: 32, category: "Smart Farming",
+                question: "Untuk mengontrol aliran air irigasi tetes (drip irrigation) secara otomatis via sinyal MQTT, aktuator mekanis pengatur katup air yang digunakan adalah...",
+                options: ["A. Solenoid Valve Water", "B. Relay AC", "C. Servo SG90", "D. Fan Blower", "E. Heater Element"],
+                answer: 0, explanation: "Solenoid Valve bekerja membukapertutup pipa air berbasis koil elektromagnetik."
+            },
+            {
+                id: 33, category: "Smart Farming",
+                question: "Parameter NPK yang diukur oleh sensor spesifik tanah pertanian presisi merepresentasikan unsur hara penting yaitu...",
+                options: [
+                    "A. Natrium, Posfor, Kalsium",
+                    "B. Nitrogen, Fosfor, Kalium",
+                    "C. Nikel, Perak, Karbon",
+                    "D. Nitrogen, Potasium, Klorin",
+                    "E. Natrium, Potassium, Kalsium"
+                ],
+                answer: 1, explanation: "NPK adalah singkatan dari Nitrogen (N), Fosfor (P), dan Kalium (K)."
+            },
+            {
+                id: 34, category: "Smart Farming",
+                question: "Jika nilai kelembaban tanah terukur 20% (sangat kering), maka tindakan otomatis sistem Smart Farming berbasis aturan MQTT broker adalah...",
+                options: [
+                    "A. Mematikan seluruh pompa",
+                    "B. Mengirim payload perintah ON ke topik `smartfarm/actuator/irrigation_pump`",
+                    "C. Mematikan sensor",
+                    "D. Mengubah QoS menjadi 0",
+                    "E. Membuka pintu greenhouse"
+                ],
+                answer: 1, explanation: "Sistem otomasi akan mempublikasikan perintah ON ke topik pompa irigasi saat tanah kering."
+            },
+            {
+                id: 35, category: "Smart Farming",
+                question: "Modul pengkabutan (Mist Sprayer) pada sistem Greenhouse pintar berfungsi utama untuk...",
+                options: [
+                    "A. Menyiram akar tanaman",
+                    "B. Menurunkan suhu dan meningkatkan kelembaban udara mikro Greenhouse",
+                    "C. Mengusir hama serangga",
+                    "D. Menyinari tanaman di malam hari",
+                    "E. Membuang gas karbon dioksida"
+                ],
+                answer: 1, explanation: "Mist Sprayer menciptakan butiran air mikro untuk mendinginkan suhu udara greenhouse."
+            },
+            {
+                id: 36, category: "Smart Farming",
+                question: "Protokol industri yang sering dikombinasikan dengan RS485 pada sensor tanah Smart Farming sebelum dikonversi ke MQTT adalah...",
+                options: ["A. Modbus RTU", "B. CAN Bus", "C. SPI", "D. I2C", "E. OneWire"],
+                answer: 0, explanation: "Modbus RTU over RS485 adalah standar komunikasi sensor industri pertanian presisi."
+            },
+            {
+                id: 37, category: "Smart Farming",
+                question: "Manakah topik telemetri MQTT yang tepat untuk mengirimkan data intensitas cahaya matahari pada lahan pertanian?",
+                options: [
+                    "A. farm/actuator/lamp",
+                    "B. smartfarm/field_1/sensor/lux",
+                    "C. lux/pump/set",
+                    "D. control/soil/water",
+                    "E. smartfarm/irrigation/valve"
+                ],
+                answer: 1, explanation: "Topik telemetri sensor intensitas cahaya yang terstruktur: smartfarm/field_1/sensor/lux."
+            },
+            {
+                id: 38, category: "Smart Farming",
+                question: "Peran utama Edge Computing (misal: Raspberry Pi) di area perkebunan terpencil sebelum meneruskan data ke Cloud Broker adalah...",
+                options: [
+                    "A. Mengisi daya baterai sensor",
+                    "B. Melakukan pra-pemrosesan data lokal dan filtering saat koneksi internet terputus",
+                    "C. Menggantikan fungsi panel surya",
+                    "D. Menghapus seluruh log sensor",
+                    "E. Memperbesar tegangan sensor"
+                ],
+                answer: 1, explanation: "Edge node memproses otomasi lokal dan menyimpan buffer data jika jaringan internet offline."
+            },
+            {
+                id: 39, category: "Smart Farming",
+                question: "Untuk menjaga sirkulasi udara di dalam Greenhouse agar tidak terlalu panas saat siang hari, aktuator yang dinyalakan via MQTT adalah...",
+                options: ["A. Solenoid Valve", "B. Exhaust Fan / Ventilation Blower", "C. Soil Heater", "D. Drip Tape", "E. UV Lamp"],
+                answer: 1, explanation: "Exhaust fan membuang udara panas berlebih keluar dari greenhouse."
+            },
+            {
+                id: 40, category: "Smart Farming",
+                question: "Manfaat utama penerapan IoT Smart Farming berbasis MQTT dibanding metode konvensional adalah...",
+                options: [
+                    "A. Efisiensi penggunaan air dan pupuk, pemantauan realtime, serta respon cepat berbasis data presisi",
+                    "B. Biaya awal tanpa modal",
+                    "C. Tidak membutuhkan sumber listrik",
+                    "D. Tanaman dapat tumbuh tanpa air",
+                    "E. Menghilangkan kebutuhan sinar matahari"
+                ],
+                answer: 0, explanation: "IoT Smart Farming meningkatkan presisi penggunaan sumber daya air/pupuk dan hasil panen."
+            }
+        ];
+
+        let quizState = {
+            currentIdx: 0,
+            answers: new Array(40).fill(null),
+            flags: new Array(40).fill(false),
+            timerSeconds: 3600, // 60 menit
+            timerInterval: null,
+            studentInfo: { name: "", class: "", nis: "" },
+            startTime: null
+        };
+
+        function startQuiz() {
+            const name = document.getElementById('student-name').value.trim();
+            const classVal = document.getElementById('student-class').value.trim();
+            const nis = document.getElementById('student-nis').value.trim();
+
+            if(!name || !classVal || !nis) {
+                alert("Mohon lengkapi seluruh data identitas siswa sebelum memulai ujian!");
+                return;
+            }
+
+            quizState.studentInfo = { name, class: classVal, nis };
+            quizState.startTime = new Date();
+
+            document.getElementById('quiz-start-screen').classList.add('hidden');
+            document.getElementById('quiz-active-screen').classList.remove('hidden');
+
+            renderQuestionPalette();
+            loadQuestion(0);
+            startTimer();
+        }
+
+        function startTimer() {
+            quizState.timerInterval = setInterval(() => {
+                quizState.timerSeconds--;
+                const mins = Math.floor(quizState.timerSeconds / 60);
+                const secs = quizState.timerSeconds % 60;
+                document.getElementById('quiz-timer').innerText = 
+                    `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+                if(quizState.timerSeconds <= 0) {
+                    clearInterval(quizState.timerInterval);
+                    alert("Waktu pengerjaan telah habis! Sistem akan mengirimkan jawaban Anda.");
+                    submitExamFinal();
+                }
+            }, 1000);
+        }
+
+        function renderQuestionPalette() {
+            const container = document.getElementById('question-palette');
+            container.innerHTML = '';
+            for(let i=0; i<40; i++) {
+                const btn = document.createElement('button');
+                btn.id = `palette-btn-${i}`;
+                btn.innerText = i + 1;
+                btn.onclick = () => loadQuestion(i);
+                updatePaletteBtnStyle(btn, i);
+                container.appendChild(btn);
+            }
+        }
+
+        function updatePaletteBtnStyle(btn, i) {
+            let base = "py-2 rounded-lg text-xs font-bold transition-all border ";
+            if(i === quizState.currentIdx) {
+                base += "border-2 border-white font-extrabold shadow-lg ";
+            }
+            
+            if(quizState.flags[i]) {
+                base += "bg-amber-500 text-white border-amber-400";
+            } else if(quizState.answers[i] !== null) {
+                base += "bg-blue-600 text-white border-blue-500";
+            } else {
+                base += "bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700";
+            }
+            btn.className = base;
+        }
+
+        function loadQuestion(idx) {
+            quizState.currentIdx = idx;
+            const q = examQuestions[idx];
+
+            document.getElementById('question-category').innerText = q.category;
+            document.getElementById('question-number-title').innerText = `Soal Nomor ${idx + 1} dari 40`;
+            document.getElementById('question-text').innerText = q.question;
+
+            // Flag state button update
+            const flagBtn = document.getElementById('btn-flag');
+            if(quizState.flags[idx]) {
+                flagBtn.className = "px-4 py-2.5 bg-amber-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-amber-500/30";
+            } else {
+                flagBtn.className = "px-4 py-2.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 rounded-xl text-xs font-bold transition-all";
+            }
+
+            // Options rendering
+            const optContainer = document.getElementById('options-container');
+            optContainer.innerHTML = '';
+
+            q.options.forEach((optText, optIdx) => {
+                const optCard = document.createElement('div');
+                const isSelected = quizState.answers[idx] === optIdx;
+                optCard.className = `p-4 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
+                    isSelected ? 'bg-blue-600/20 border-blue-500 text-white font-semibold' : 'bg-slate-900/60 border-slate-700/80 text-slate-300 hover:bg-slate-800'
+                }`;
+                optCard.onclick = () => selectOption(optIdx);
+
+                optCard.innerHTML = `
+                    <span class="text-xs sm:text-sm leading-snug">${optText}</span>
+                    <div class="w-5 h-5 rounded-full border ${isSelected ? 'border-blue-400 bg-blue-500 flex items-center justify-center' : 'border-slate-600'}">
+                        ${isSelected ? '<i class="fa-solid fa-check text-[10px] text-white"></i>' : ''}
+                    </div>
+                `;
+                optContainer.appendChild(optCard);
+            });
+
+            // Update palette buttons highlights
+            for(let i=0; i<40; i++) {
+                const btn = document.getElementById(`palette-btn-${i}`);
+                if(btn) updatePaletteBtnStyle(btn, i);
+            }
+
+            // Update answered count
+            const answeredCount = quizState.answers.filter(a => a !== null).length;
+            document.getElementById('answered-count').innerText = answeredCount;
+
+            // Disable prev/next on boundaries
+            document.getElementById('btn-prev').disabled = idx === 0;
+            document.getElementById('btn-next').disabled = idx === 39;
+        }
+
+        function selectOption(optIdx) {
+            quizState.answers[quizState.currentIdx] = optIdx;
+            loadQuestion(quizState.currentIdx);
+        }
+
+        function toggleFlagQuestion() {
+            quizState.flags[quizState.currentIdx] = !quizState.flags[quizState.currentIdx];
+            loadQuestion(quizState.currentIdx);
+        }
+
+        function prevQuestion() {
+            if(quizState.currentIdx > 0) loadQuestion(quizState.currentIdx - 1);
+        }
+
+        function nextQuestion() {
+            if(quizState.currentIdx < 39) loadQuestion(quizState.currentIdx + 1);
+        }
+
+        function confirmSubmitQuiz() {
+            const unanswered = quizState.answers.filter(a => a === null).length;
+            const warning = document.getElementById('modal-unanswered-warning');
+            if(unanswered > 0) {
+                warning.innerText = `Peringatan: Masih ada ${unanswered} soal yang belum dijawab!`;
+                warning.classList.remove('hidden');
+            } else {
+                warning.classList.add('hidden');
+            }
+            document.getElementById('modal-submit').classList.remove('hidden');
+        }
+
+        function closeModalSubmit() {
+            document.getElementById('modal-submit').classList.add('hidden');
+        }
+
+
+        /* ================= 4. EVALUASI & LAPORAN HASIL UJIAN ================= */
+        let topicChartInstance = null;
+
+        function submitExamFinal() {
+            clearInterval(quizState.timerInterval);
+            closeModalSubmit();
+
+            // Calculate Scores
+            let correctCount = 0;
+            let topicScores = {
+                "Konsep MQTT": { correct: 0, total: 10 },
+                "Payload & Mikrokontroler": { correct: 0, total: 10 },
+                "Smart Home": { correct: 0, total: 10 },
+                "Smart Farming": { correct: 0, total: 10 }
+            };
+
+            examQuestions.forEach((q, idx) => {
+                const userAns = quizState.answers[idx];
+                if(userAns === q.answer) {
+                    correctCount++;
+                    if(topicScores[q.category]) topicScores[q.category].correct++;
+                }
+            });
+
+            const finalScore = Math.round((correctCount / 40) * 100);
+            const isPassed = finalScore >= 75;
+
+            // Render Laporan Metadata
+            document.getElementById('rep-name').innerText = quizState.studentInfo.name;
+            document.getElementById('rep-class').innerText = quizState.studentInfo.class;
+            document.getElementById('rep-nis').innerText = quizState.studentInfo.nis;
+            
+            const elapsedMins = Math.floor((3600 - quizState.timerSeconds) / 60);
+            const elapsedSecs = (3600 - quizState.timerSeconds) % 60;
+            document.getElementById('rep-time').innerText = `${elapsedMins} Menit ${elapsedSecs} Detik`;
+
+            document.getElementById('rep-score').innerText = finalScore;
+            document.getElementById('rep-correct-count').innerText = `${correctCount} / 40 Soal Benar`;
+
+            const kkmBadge = document.getElementById('rep-kkm-status');
+            if(isPassed) {
+                kkmBadge.className = "text-lg font-bold text-emerald-400";
+                kkmBadge.innerText = "LULUS / TUNTAS";
+            } else {
+                kkmBadge.className = "text-lg font-bold text-red-400";
+                kkmBadge.innerText = "BELUM TUNTAS (REMIDIAL)";
+            }
+
+            // Render Topic Breakdown list
+            const topicListContainer = document.getElementById('topic-performance-list');
+            topicListContainer.innerHTML = '';
+
+            const topicNames = Object.keys(topicScores);
+            const percentages = [];
+
+            topicNames.forEach(tName => {
+                const tData = topicScores[tName];
+                const pct = Math.round((tData.correct / tData.total) * 100);
+                percentages.push(pct);
+
+                const item = document.createElement('div');
+                item.className = "space-y-1";
+                item.innerHTML = `
+                    <div class="flex justify-between text-xs font-semibold">
+                        <span class="text-slate-300">${tName}</span>
+                        <span class="${pct >= 75 ? 'text-emerald-400':'text-amber-400'}">${pct}% (${tData.correct}/${tData.total})</span>
+                    </div>
+                    <div class="w-full bg-slate-900 rounded-full h-2.5">
+                        <div class="h-2.5 rounded-full ${pct >= 75 ? 'bg-emerald-500':'bg-amber-500'}" style="width: ${pct}%"></div>
+                    </div>
+                `;
+                topicListContainer.appendChild(item);
+            });
+
+            // Render Chart
+            renderRadarChart(topicNames, percentages);
+
+            // Render Review Items
+            renderAnswerReview();
+
+            // Switch to Laporan Tab
+            document.getElementById('no-report-view').classList.add('hidden');
+            document.getElementById('report-view-container').classList.remove('hidden');
+            switchTab('laporan');
+        }
+
+        function renderRadarChart(labels, dataValues) {
+            const ctx = document.getElementById('topicChart').getContext('2d');
+            if(topicChartInstance) topicChartInstance.destroy();
+
+            topicChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Penguasaan Topik (%)',
+                        data: dataValues,
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: '#3b82f6',
+                        pointBackgroundColor: '#10b981',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#3b82f6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            pointLabels: { color: '#cbd5e1', font: { size: 11 } },
+                            ticks: { display: false, max: 100 }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function renderAnswerReview() {
+            const container = document.getElementById('review-questions-container');
+            container.innerHTML = '';
+
+            examQuestions.forEach((q, idx) => {
+                const userAns = quizState.answers[idx];
+                const isCorrect = userAns === q.answer;
+
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-xl border ${isCorrect ? 'bg-slate-900/60 border-emerald-500/40' : 'bg-slate-900/60 border-red-500/40'} space-y-2`;
+
+                const userAnsText = userAns !== null ? q.options[userAns] : "Tidak Dijawab";
+                const correctAnsText = q.options[q.answer];
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-2">
+                        <span class="text-xs font-bold ${isCorrect ? 'text-emerald-400':'text-red-400'}">
+                            Soal ${idx + 1} (${q.category}) - ${isCorrect ? 'BENAR (+2.5)' : 'SALAH (0)'}
+                        </span>
+                        <i class="fa-solid ${isCorrect ? 'fa-circle-check text-emerald-400':'fa-circle-xmark text-red-400'} text-base"></i>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-100 font-medium">${q.question}</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1 font-mono">
+                        <div class="p-2 rounded ${isCorrect ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-800/40':'bg-red-950/40 text-red-300 border border-red-800/40'}">
+                            Jawaban Anda: <b>${userAnsText}</b>
+                        </div>
+                        <div class="p-2 rounded bg-blue-950/40 text-blue-300 border border-blue-800/40">
+                            Kunci Jawaban: <b>${correctAnsText}</b>
+                        </div>
+                    </div>
+                    <div class="text-[11px] text-slate-400 bg-slate-950 p-2.5 rounded border border-slate-800 leading-relaxed">
+                        <span class="font-bold text-slate-300">Pembahasan:</span> ${q.explanation}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function resetExam() {
+            if(confirm("Apakah Anda ingin mengulang pengerjaan Uji Kompetensi?")) {
+                quizState.answers = new Array(40).fill(null);
+                quizState.flags = new Array(40).fill(false);
+                quizState.timerSeconds = 3600;
+                
+                document.getElementById('quiz-start-screen').classList.remove('hidden');
+                document.getElementById('quiz-active-screen').classList.add('hidden');
+                document.getElementById('report-view-container').classList.add('hidden');
+                document.getElementById('no-report-view').classList.remove('hidden');
+                
+                switchTab('ujian');
+            }
+        }
+
+
+        /* ================= NAVIGATION & TAB SWITCHER ================= */
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.className = "nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-300 hover:bg-slate-800 transition-all flex items-center space-x-2";
+            });
+
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if(activeBtn) {
+                activeBtn.className = "nav-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center space-x-2 bg-blue-600 text-white shadow-lg shadow-blue-600/20";
+            }
+            
+            // Close mobile menu if open
+            document.getElementById('mobile-menu').classList.add('hidden');
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
